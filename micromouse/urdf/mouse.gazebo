@@ -33,8 +33,8 @@
       <frameId>base_link</frameId>
       <topicName>navsat/fix</topicName>
       <velocityTopicName>navsat/vel</velocityTopicName>
-      <referenceLatitude>47.479049</referenceLatitude>
-      <referenceLongitude>19.057787</referenceLongitude>
+      <referenceLatitude>0</referenceLatitude>
+      <referenceLongitude>0</referenceLongitude>
       <referenceHeading>0</referenceHeading>
       <referenceAltitude>0</referenceAltitude>
       <drift>0.0001 0.0001 0.0001</drift>
