@@ -1,27 +1,20 @@
-with open("test.sdf",'r+') as file:
+with open("test/test.sdf",'r+') as file:
     file.truncate(16)
 testString=''
-String1="""<?xml version='1.0'?>
-<sdf version='1.7'>
-  <model name='Untitled'>
-    <pose>-2.9525 -2.0275 0 0 -0 0</pose>
-    <link name='Wall_"""
-String2="""'>
-      <collision name='Wall_"""
-String3="""_Collision'>
+Strings=["""<link name='Wall_""","""'>
+      <collision name='Wall_""","""_Collision'>
         <geometry>
           <box>
-            <size>1.5 0.15 2.5</size>
+            <size>0.18 0.012 0.05</size>
           </box>
         </geometry>
-        <pose>0 0 1.25 0 -0 0</pose>
+        <pose>0 0 0.025 0 -0 0</pose>
       </collision>
-      <visual name='Wall_"""
-String4="""_Visual'>
-        <pose>0 0 1.25 0 -0 0</pose>
+      <visual name='Wall_""","""_Visual'>
+        <pose>0 0 0.025 0 -0 0</pose>
         <geometry>
           <box>
-            <size>1.5 0.15 2.5</size>
+            <size>0.18 0.012 0.05</size>
           </box>
         </geometry>
         <material>
@@ -35,15 +28,46 @@ String4="""_Visual'>
           <layer>0</layer>
         </meta>
       </visual>
-      <pose>"""
-String5="""</pose>
-    </link>
-         <static>1</static>
+      <pose>""","""</pose>
+    </link>"""]
+
+pose=[0,0,0,0,0,0]
+
+
+vertical_walls=[[1,0,0,1,0,0,0,1,1],[1,0,0,0,1,0,0,0,1],[1,0,0,1,0,0,1,0,1],[1,0,1,1,0,1,0,0,1],[1,1,0,1,1,0,1,0,1],[1,1,0,1,0,1,0,1,1],[1,1,1,1,0,0,1,1,1],[1,1,0,0,0,0,0,0,1]]
+horizontal_walls=[[1,1,1,1,1,1,1,1],[0,1,0,1,1,1,0,0],[1,1,1,0,1,1,1,0],[1,1,0,0,1,0,0,1],[0,0,0,0,1,0,1,1],[0,1,0,1,0,1,0,0],[0,0,1,0,1,0,0,0],[0,0,0,1,1,1,1,0],[1,1,1,1,1,1,1,1]]
+wall_id=0
+wall_length=0.18
+testString="""<?xml version='1.0'?>
+<sdf version='1.7'>
+  <model name='Untitled'>
+    <pose>0 0 0 0 -0 0</pose>
+    """
+for i in range(8):
+   for j in range(9):
+       if vertical_walls[i][j]:
+          pose=[wall_length*i, wall_length*j, 0,0,0, 0]
+          testString=testString+Strings[0]+str(wall_id)+Strings[1]+str(wall_id)+Strings[2]+str(wall_id)+Strings[3]+str(pose[0])+' '+str(pose[1])+' '+str(pose[2])+' '+str(pose[3])+' '+str(pose[4])+' '+str(pose[5])+Strings[4]
+          wall_id +=1
+for i in range(9):
+   for j in range(8):
+       if horizontal_walls[i][j]:
+          pose=[wall_length*i-wall_length/2, wall_length*j+wall_length/2, 0,0,0, 1.5708]
+          testString=testString+Strings[0]+str(wall_id)+Strings[1]+str(wall_id)+Strings[2]+str(wall_id)+Strings[3]+str(pose[0])+' '+str(pose[1])+' '+str(pose[2])+' '+str(pose[3])+' '+str(pose[4])+' '+str(pose[5])+Strings[4]
+          wall_id +=1
+
+
+
+      
+#for x in range(3):
+#  pose=[pose[0]+x*2, pose[1]+x*2, 0,0,0, x*1.5708]
+#  testString=testString+String1+str(wall_id)+String2+str(x)+String3+str(wall_id)+String4+str(pose[0])+' '+str(pose[1])+' '+str(pose[2])+' '+str(pose[3])+' '+str(pose[4])+' '+str(pose[5])+String5
+
+testString+="""<static>1</static>
   </model>
 </sdf>"""
-pose=[0,0,0,0,0,0]
-for x in range(3):
-  pose=[pose[0]+x*2, pose[1]+x*2, 0,0,0, x*1.5708]
-  testString=testString+String1+str(x)+String2+str(x)+String3+str(x)+String4+str(pose[0])+' '+str(pose[1])+' '+str(pose[2])+' '+str(pose[3])+' '+str(pose[4])+' '+str(pose[5])+String5
-with open("test.sdf","w") as f:
+with open("test/test.sdf","w") as f:
     f.writelines(testString)
+
+
+
