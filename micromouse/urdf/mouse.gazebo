@@ -24,6 +24,23 @@
     </plugin>
   </gazebo>
 
+  <!-- GPS -->
+  <gazebo>
+    <plugin name="gps_controller" filename="libhector_gazebo_ros_gps.so">
+      <robotNamespace>/</robotNamespace>
+      <updateRate>40</updateRate>
+      <bodyName>base_link</bodyName>
+      <frameId>base_link</frameId>
+      <topicName>navsat/fix</topicName>
+      <velocityTopicName>navsat/vel</velocityTopicName>
+      <referenceLatitude>47.479049</referenceLatitude>
+      <referenceLongitude>19.057787</referenceLongitude>
+      <referenceHeading>0</referenceHeading>
+      <referenceAltitude>0</referenceAltitude>
+      <drift>0.0001 0.0001 0.0001</drift>
+    </plugin>
+  </gazebo>
+  
   <!-- IMU -->
   <gazebo>
     <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
