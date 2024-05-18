@@ -5,16 +5,16 @@ Strings=["""<link name='Wall_""","""'>
       <collision name='Wall_""","""_Collision'>
         <geometry>
           <box>
-            <size>0.18 0.012 0.05</size>
+            <size>0.31 0.012 0.20</size>
           </box>
         </geometry>
-        <pose>0 0 0.025 0 -0 0</pose>
+        <pose>0 0 0.1 0 -0 0</pose>
       </collision>
       <visual name='Wall_""","""_Visual'>
-        <pose>0 0 0.025 0 -0 0</pose>
+        <pose>0 0 0.1 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.18 0.012 0.05</size>
+            <size>0.31 0.012 0.20</size>
           </box>
         </geometry>
         <material>
@@ -37,7 +37,7 @@ pose=[0,0,0,0,0,0]
 vertical_walls=[[1,0,0,1,0,0,0,1,1],[1,0,0,0,1,0,0,0,1],[1,0,0,1,0,0,1,0,1],[1,0,1,1,0,1,0,0,1],[1,1,0,1,1,0,1,0,1],[1,1,0,1,0,1,0,1,1],[1,1,1,1,0,0,1,1,1],[1,1,0,0,0,0,0,0,1]]
 horizontal_walls=[[1,1,1,1,1,1,1,1],[0,1,0,1,1,1,0,0],[1,1,1,0,1,1,1,0],[1,1,0,0,1,0,0,1],[0,0,0,0,1,0,1,1],[0,1,0,1,0,1,0,0],[0,0,1,0,1,0,0,0],[0,0,0,1,1,1,1,0],[1,1,1,1,1,1,1,1]]
 wall_id=0
-wall_length=0.18
+wall_length=0.31
 testString="""<?xml version='1.0'?>
 <sdf version='1.7'>
   <model name='Untitled'>
