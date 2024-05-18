@@ -8,15 +8,15 @@
 
   <!-- Robot pose -->
   <!-- Inititalize it's position in the desired location inside the world -->
-  <arg name="x" default="2.5"/>
-  <arg name="y" default="1.5"/>
+  <arg name="x" default="3"/>
+  <arg name="y" default="1.65"/>
   <arg name="z" default="0"/>
   <arg name="roll" default="0"/>
   <arg name="pitch" default="0"/>
   <arg name="yaw" default="0"/>
 
   <!-- Launch our Gazebo world -->
-  <arg name="world_file" default="$(find micromouse)/worlds/test.world"/>
+  <arg name="world_file" default="$(find micromouse)/worlds/test_fixed.world"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="use_sim_time" value="true"/>
