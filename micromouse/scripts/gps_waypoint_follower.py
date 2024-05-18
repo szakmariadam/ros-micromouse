@@ -47,7 +47,7 @@ latitude, longitude = 0, 0
 roll, pitch, yaw = 0, 0, 0
 positionX, positionY=0.155,0.155
 ranges= [0]*720
-
+bearing =0
 rospy.init_node('gps_waypoint_follower')
 
 sub_odom = rospy.Subscriber ('/odom', Odometry, get_rotation)
@@ -120,7 +120,7 @@ def maze_fill(mazeIndexX_in, mazeIndexY_in, maze_in, yaw_in):
 while not rospy.is_shutdown():
     print(positionY, positionX)
 
-    distanceX, distanceY = waypoints[waypointIndex][0]-positionX, waypoints[waypointIndex][1]-positionY #haversine(latitude, longitude, waypoints[waypointIndex][0], waypoints[waypointIndex][1])
+    distanceX, distanceY = waypoints[waypointIndex][0]-positionX,waypoints[waypointIndex][1]-positionY #haversine(latitude, longitude, waypoints[waypointIndex][0], waypoints[waypointIndex][1])
 
         # calculate heading error from yaw or bearing
     
@@ -152,7 +152,7 @@ while not rospy.is_shutdown():
         # Only straight driving, no curves
         cmd_vel.angular.z = 0
         # Distance error, threshold is 0.2m
-        if abs(distanceY) > 0.001 or abs(distanceX) > 0.001:
+        if distanceY > 0.0001 :
             cmd_vel.linear.x = -0.2
         else:
             cmd_vel.linear.x = 0
@@ -175,32 +175,44 @@ while not rospy.is_shutdown():
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
         if check_walls(0)[3]==2:
             if yaw < 0.01 or yaw > 6.2:
+                bearing = 0
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
             elif yaw > 1.4708 or yaw < 1.6708:
+                bearing = 1.5708
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
             elif yaw < 3.2415 or yaw > 3.0415:
+                bearing = 3.1415
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
             elif yaw > 4.6124 or yaw < 4.8124:
+                bearing = 4.7124
                 waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
             
         elif check_walls(0)[2]==2:
             if yaw < 0.01 or yaw > 6.2:
+                bearing = 0
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
             elif yaw > 1.4708 or yaw < 1.6708:
+                bearing = 1.5708
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
             elif yaw < 3.2415 or yaw > 3.0415:
+                bearing = 3.1415
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
             elif yaw > 4.6124 or yaw < 4.8124:
+                bearing = 4.7124
                 waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
             
         elif check_walls(0)[1]==2:
             if yaw < 0.01 or yaw > 6.2:
+                bearing = 0
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
             elif yaw > 1.4708 or yaw < 1.6708:
+                bearing = 1.5708
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
             elif yaw < 3.2415 or yaw > 3.0415:
+                bearing = 3.1415
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
             elif yaw > 4.6124 or yaw < 4.8124:
+                bearing = 4.7124
                 waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
             
                 
