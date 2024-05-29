@@ -49,3 +49,18 @@ while isNeighbour(maze, start[0], start[1], 0)==1:
 for i in range(0,len(maze)):
     print(maze[i])
 
+#megoldott labirintus fileba irása
+
+f = open("temp.txt", "w")
+f.close()
+
+f = open("temp.txt", "a")
+
+for i in range(0, len(maze)):
+    for j in range(0, len(maze[0])):
+        f.write(str(maze[i][j]))
+        f.write(",")
+    if i!=len(maze)-1:
+        f.write("\n")
+
+f.close()

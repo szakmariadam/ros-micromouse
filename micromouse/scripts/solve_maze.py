@@ -6,18 +6,40 @@ import numpy as np
 #  |
 #  V
 
+#megoldott labirintus fileból kiolvasása
 
-maze = [['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
-['x', 's', 15, 14, 13, 12, 11, 10, 9, 8, 'x'],
-['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 7, 'x'],
-['x', 14, 15, 0, 0, 0, 0, 0, 'x', 6, 'x'],
-['x', 13, 'x', 'x', 'x', 'x', 'x', 0, 'x', 5, 'x'],
-['x', 12, 'x', 0, 0, 0, 'x', 0, 'x', 4, 'x'],
-['x', 11, 'x', 0, 'x', 'x', 'x', 0, 'x', 3, 'x'],
-['x', 10, 'x', 0, 0, 0, 0, 0, 'x', 2, 'x'],
-['x', 9, 'x', 'x', 'x', 'x', 'x', 'x', 'x', 1, 'x'],
-['x', 8, 7, 6, 5, 4, 3, 2, 1, 'g', 'x'],
-['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
+matrix = [[]]
+
+f=open("temp.txt","r")
+
+temp=f.read()
+
+f.close()
+
+rows=0
+
+for i in range(0,len(temp)):
+    if temp[i]=="\n":
+        rows=rows+1
+        matrix.append([])
+    elif temp[i]!="," and temp[i]!="\n":
+        if temp[i+1]!="," and temp[i]!="\n":
+            matrix[rows].append(temp[i]+temp[i+1])
+        elif temp[i-1]=="," or temp[i-1]=="\n":
+            matrix[rows].append(temp[i])
+
+for i in range(0, len(matrix)):
+    for j in range(0, len(matrix[0])):
+         if matrix[i][j]!="x" and matrix[i][j]!="s" and matrix[i][j]!="g":
+            matrix[i][j]=int(matrix[i][j])
+
+for i in range(0,len(matrix)):
+    print(matrix[i])
+
+
+#waypointok kiszámolása
+
+maze = matrix
 
 start = [1,1]
 goal = [9,9]
@@ -63,4 +85,4 @@ while position!=goal:
 
 print(position)
 print(distance)
-print(waypoints,3)
+print(waypoints)
