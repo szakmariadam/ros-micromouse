@@ -67,6 +67,13 @@
       </geometry>
     </visual>
 
+    <visual name='lidar_support'>
+      <origin xyz="0 0 0.04" rpy="0 0 0"/> 
+      <geometry>
+        <box size=".03 .03 .04"/>
+      </geometry>
+    </visual>
+
   </link>
 
   <joint type="continuous" name="right_wheel_joint">
