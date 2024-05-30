@@ -50,12 +50,12 @@
       <topicName>imu/data</topicName>
       <accelOffset>0.0 0.0 0.0</accelOffset>
       <accelDrift>0.005 0.005 0.005</accelDrift>
-      <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
+      <accelGaussianNoise>0.00005 0.00005 0.00005</accelGaussianNoise>
       <rateOffset>0.0 0.0 0.0</rateOffset>
       <rateDrift>0.005 0.005 0.005 </rateDrift>
-      <rateGaussianNoise>0.005 0.005 0.005 </rateGaussianNoise>
+      <rateGaussianNoise>0.00005 0.00005 0.00005 </rateGaussianNoise>
       <yawDrift>0.005</yawDrift>
-      <yawGaussianNoise>0.005</yawGaussianNoise>
+      <yawGaussianNoise>0.00005</yawGaussianNoise>
     </plugin>
   </gazebo>
 

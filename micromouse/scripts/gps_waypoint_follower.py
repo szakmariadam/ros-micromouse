@@ -56,14 +56,14 @@ sub_odom = rospy.Subscriber ('/odom', Odometry, get_rotation)
 sub_gps = rospy.Subscriber ('/navsat/fix', NavSatFix, get_gps_coordinates)
 pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
 
-rate = rospy.Rate(10)
+rate = rospy.Rate(20)
 
 rospy.loginfo("GPS waypoint follower node has started!")
 
 cellLength=0.18 #in meters
 
 # Example waypoints [latitude, longitude]
-waypoints = [[0.155, 0.155]]
+waypoints = [[0.155, 0.155+0.31]]
 
 cmd_vel = Twist()
 cmd_vel.linear.x = 0
@@ -99,8 +99,8 @@ def check_walls(yaw_in):
     rightWall = 1 if ranges[2] < 0.3 else 2
     frontWall = 1 if ranges[3] < 0.3 else 2
     leftWall = 1 if ranges[0] < 0.3 else 2
-    
-    if yaw < 0.1 and yaw > -0.1:
+    print(yaw_in)
+    if yaw_in < 0.1 and yaw_in > -0.1:
         # print("egyenesen")
         return [backWall, rightWall, frontWall, leftWall]
     elif yaw_in > 1.4708 and yaw_in < 1.6708:
@@ -128,7 +128,7 @@ while not rospy.is_shutdown():
     #print(positionY, positionX)
     # print(yaw)
 
-    distanceX, distanceY = waypoints[waypointIndex][0]-positionX,waypoints[waypointIndex][1]-positionY #haversine(latitude, longitude, waypoints[waypointIndex][0], waypoints[waypointIndex][1])
+    distanceX, distanceY = waypoints[len(waypoints)-1][0]-positionX,waypoints[len(waypoints)-1][1]-positionY #haversine(latitude, longitude, waypoints[waypointIndex][0], waypoints[waypointIndex][1])
 
         # calculate heading error from yaw or bearing
     
@@ -142,37 +142,50 @@ while not rospy.is_shutdown():
     #rospy.loginfo("Bearing: %.3f rad, yaw: %.3f rad, error: %.3f rad" % (bearing, yaw, headingError))
     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     # print(distanceX, distanceY)
+    print(abs(distanceX)+abs(distanceY))
     # print(positionX, positionY)
     # print("-----------")
-    print(waypoints)
+    print(waypoints[len(waypoints)-1])
     # print("#####################")
     # print(yaw)
     # print(check_walls(yaw))
     # Heading error, threshold is 0.1 rad
+    print(headingError)
     if abs(headingError) > 0.01:
         # Only rotate in place if there is any heading error
         cmd_vel.linear.x = 0
         isRotating=True
-        if headingError >0:
-            cmd_vel.angular.z = -0.3
-        else:
-            cmd_vel.angular.z = 0.3
+        if headingError >0.1:
+            cmd_vel.angular.z = -0.2
+        elif headingError < -0.1:
+            cmd_vel.angular.z = 0.2
+        elif headingError> 0:
+            cmd_vel.angular.z=-0.05
+        elif headingError< 0:
+            cmd_vel.angular.z=0.05
     else:
         # Only straight driving, no curves
         cmd_vel.angular.z = 0
         isRotating=False
         # Distance error, threshold is 0.2m
-        if abs(distanceY)+abs(distanceX) > 0.01 :
+        if abs(distanceY)+abs(distanceX) < 0.15 and abs(distanceY)+abs(distanceX)>0.14:
+            bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
+
+        if abs(distanceY)+abs(distanceX) > 0.02 :
             cmd_vel.linear.x = -0.2
             isMoving=True
         else:
             cmd_vel.linear.x = 0
             isMoving=False
             rospy.loginfo("Target waypoint reached!")
+            print(waypoints[len(waypoints)-1][0], waypoints[len(waypoints)-1][1])
+            bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
+            print(bearing) 
             waypointIndex += 1
     pub.publish(cmd_vel)
 
     if waypointIndex == len(waypoints) and not(isRotating)and not(isMoving):
+        
         if yaw < 0.1 and yaw > -0.1:
             mazeIndexX+=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
@@ -185,53 +198,48 @@ while not rospy.is_shutdown():
         elif yaw < -1.4708 and yaw >-1.6708:
             mazeIndexY-=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
+        print(check_walls(0))
         if check_walls(0)[3]==2:   #ha robot saját koord rendszere szerint a bal oldalán nincs fal akkor:
             print("balra fog menni")
             if yaw < 0.1 and yaw > -0.1:
-                bearing = 0
+                
                 waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
             elif yaw > 1.4708 and yaw < 1.6708:
-                bearing = 1.5708
+               
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
             elif yaw < -3.0415 or yaw > 3.0415:
-                bearing = 3.1415
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
             elif yaw < -1.4708 and yaw >-1.6708:
-                bearing = 4.7124
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
             
         elif check_walls(0)[2]==2: #ha robot saját koord rendszere szerint előtte nincs fal akkor:
             print("egyenesen fog menni")
             if yaw < 0.1 and yaw > -0.1:
-                bearing = 0
-                waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
-            elif yaw > 1.4708 and yaw < 1.6708:
-                bearing = 1.5708
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
-            elif yaw < -3.0415 or yaw > 3.0415:
-                bearing = 3.1415
-                waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
-            elif yaw < -1.4708 and yaw >-1.6708:
-                bearing = 4.7124
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
+            elif yaw > 1.4708 and yaw < 1.6708:
+                waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
+            elif yaw < -3.0415 or yaw > 3.0415:
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
+            elif yaw < -1.4708 and yaw >-1.6708:
+                waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
             
         elif check_walls(0)[1]==2: #ha robot saját koord rendszere szerint a jobb oldalán nincs fal akkor:
             print("jobbra fog menni")
             if yaw < 0.1 and yaw > -0.1:
-                bearing = 0
-                waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
-            elif yaw > 1.4708 and yaw < 1.6708:
-                bearing = 1.5708
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
-            elif yaw < -3.0415 or yaw > 3.0415:
-                bearing = 3.1415
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
-            elif yaw < -1.4708 and yaw >-1.6708:
-                bearing = 4.7124
+            elif yaw > 1.4708 and yaw < 1.6708:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
-            
-                
+            elif yaw < -3.0415 or yaw > 3.0415:
+                waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
+            elif yaw < -1.4708 and yaw >-1.6708:
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
+       
+        bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
+
         rospy.loginfo("Last target waypoint reached!")
         waypointIndex -= 1
+    
     else:
         rate.sleep()
+    
+ 
