@@ -48,6 +48,8 @@ roll, pitch, yaw = 0, 0, 0
 positionX, positionY=0.155,0.155
 ranges= [0]*720
 bearing =0
+isRotating=False
+isMoving=False
 rospy.init_node('gps_waypoint_follower')
 
 sub_odom = rospy.Subscriber ('/odom', Odometry, get_rotation)
@@ -93,11 +95,11 @@ maze=np.zeros((17,17))
 #    01010 
 def check_walls(yaw_in):
     global backWall, rightWall, frontWall, leftWall 
-    backWall = 1 if ranges[0] < 0.3 else 2
-    rightWall = 1 if ranges[180] < 0.3 else 2
-    frontWall = 1 if ranges[360] < 0.3 else 2
-    leftWall = 1 if ranges[540] < 0.3 else 2
-  
+    backWall = 1 if ranges[4] < 0.3 else 2
+    rightWall = 1 if ranges[0] < 0.3 else 2
+    frontWall = 1 if ranges[1] < 0.3 else 2
+    leftWall = 1 if ranges[2] < 0.3 else 2
+    
     if yaw < 0.1 or yaw > 6.283:
         return [backWall, rightWall, frontWall, leftWall]
     elif yaw_in > 1.4708 or yaw_in < 1.6708:
@@ -132,35 +134,39 @@ while not rospy.is_shutdown():
 
     #rospy.loginfo("Distance: %.3f m, heading error: %.3f rad." % (distanceX+distanceY, headingError))
     #rospy.loginfo("Bearing: %.3f rad, yaw: %.3f rad, error: %.3f rad" % (bearing, yaw, headingError))
-    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print(distanceX, distanceY)
-    print(positionX, positionY)
-    print("-----------")
-    print(waypoints)
-    print("#####################")
-    print(yaw)
+    # print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    # print(distanceX, distanceY)
+    # print(positionX, positionY)
+    # print("-----------")
+    # print(waypoints)
+    # print("#####################")
+    # print(yaw)
+    print(check_walls(yaw))
     # Heading error, threshold is 0.1 rad
     if abs(headingError) > 0.01:
         # Only rotate in place if there is any heading error
         cmd_vel.linear.x = 0
-
-        if headingError < 0:
+        isRotating=True
+        if headingError >0:
             cmd_vel.angular.z = -0.3
         else:
             cmd_vel.angular.z = 0.3
     else:
         # Only straight driving, no curves
         cmd_vel.angular.z = 0
+        isRotating=False
         # Distance error, threshold is 0.2m
-        if distanceY > 0.0001 :
+        if abs(distanceY)+abs(distanceX) > 0.01 :
             cmd_vel.linear.x = -0.2
+            isMoving=True
         else:
             cmd_vel.linear.x = 0
+            isMoving=False
             rospy.loginfo("Target waypoint reached!")
             waypointIndex += 1
     pub.publish(cmd_vel)
 
-    if waypointIndex == len(waypoints):
+    if waypointIndex == len(waypoints) and not(isRotating)and not(isMoving):
         if yaw < 0.1 or yaw > 6.283:
             mazeIndexX+=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
