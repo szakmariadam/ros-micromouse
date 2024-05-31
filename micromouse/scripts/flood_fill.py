@@ -6,6 +6,34 @@ def isNeighbour(maze, x, y, n):
         return 1
     else:
         return 0
+    
+matrix = [[]]
+
+f=open("temp.txt","r")
+
+temp=f.read()
+
+f.close()
+
+rows=0
+
+for i in range(0,len(temp)):
+    if temp[i]=="\n":
+        rows=rows+1
+        matrix.append([])
+    elif temp[i]!="," and temp[i]!="\n":
+        if temp[i+1]!="," and temp[i]!="\n":
+            matrix[rows].append(temp[i]+temp[i+1])
+        elif temp[i-1]=="," or temp[i-1]=="\n":
+            matrix[rows].append(temp[i])
+
+for i in range(0, len(matrix)):
+    for j in range(0, len(matrix[0])):
+         if matrix[i][j]!="x" and matrix[i][j]!="s" and matrix[i][j]!="g":
+            matrix[i][j]=int(matrix[i][j])
+
+#maze=matrix
+
 #térképezés eredménye:   
 maze = [[ 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ],
         ['x','s','-', 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'x'],
@@ -31,6 +59,9 @@ for i in range(0, len(maze)):
 
 start = [1,1]
 goal = [9,9]
+
+maze[start[0]][start[1]]='s'
+maze[goal[0]][goal[1]]='g'
 
 for i in range(0, len(maze)):
     for j in range(0, len(maze[0])):
