@@ -189,36 +189,36 @@ while not rospy.is_shutdown():
             print("balra fog menni")
             if yaw < 0.2 and yaw > -0.2:
                 
-                waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]])
             elif yaw > 1.3708 and yaw < 1.7708:
                
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-cellLength])
             elif yaw < -2.9415 or yaw > 2.9415:
-                waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]+cellLength,waypoints[waypointIndex-1][1]])
             elif yaw < -1.3708 and yaw >-1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+cellLength])
             
         elif check_walls(0)[2]==2: #ha robot saját koord rendszere szerint előtte nincs fal akkor:
             print("egyenesen fog menni")
             if yaw < 0.2 and yaw > -0.2:
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+cellLength])
             elif yaw > 1.3708 and yaw < 1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]+cellLength,waypoints[waypointIndex-1][1]])
             elif yaw < -2.9415 or yaw > 2.9415:
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-cellLength])
             elif yaw < -1.3708 and yaw >-1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]])
             
         elif check_walls(0)[1]==2: #ha robot saját koord rendszere szerint a jobb oldalán nincs fal akkor:
             print("jobbra fog menni")
             if yaw < 0.2 and yaw > -0.2:
-                waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]+cellLength,waypoints[waypointIndex-1][1]])
             elif yaw > 1.3708 and yaw < 1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+cellLength])
             elif yaw < -2.9415 or yaw > 2.9415:
-                waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]])
             elif yaw < -1.3708 and yaw >-1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-cellLength])
        
         bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
 
@@ -227,19 +227,5 @@ while not rospy.is_shutdown():
     
     else:
         rate.sleep()
-
-f = open("temp.txt", "w")
-f.close()
-
-f = open("temp.txt", "a")
-
-for i in range(0, len(maze)):
-    for j in range(0, len(maze[0])):
-        f.write(str(maze[i][j]))
-        f.write(",")
-    if i!=len(maze)-1:
-        f.write("\n")
-
-f.close()
     
  
