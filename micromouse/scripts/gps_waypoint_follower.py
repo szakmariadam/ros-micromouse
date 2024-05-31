@@ -10,9 +10,6 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from sensor_msgs.msg import LaserScan
 import numpy as np
 
-
-
-
 def get_rotation (msg):
     global roll, pitch, yaw, positionX, positionY
     positionX  = msg.pose.pose.position.x
@@ -20,28 +17,6 @@ def get_rotation (msg):
     orientation_q = msg.pose.pose.orientation
     orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
     (roll, pitch, yaw) = euler_from_quaternion (orientation_list)
-
-def get_gps_coordinates(msg):
-    global latitude, longitude
-    latitude = msg.latitude
-    longitude = msg.longitude
-    #print(msg.latitude, msg.longitude)
-
-def haversine(lat1, lon1, lat2, lon2):
-    # Calculate distance
-    R = 6378.137 # Radius of earth in km
-    dLat = lat2 * math.pi / 180 - lat1 * math.pi / 180
-    dLon = lon2 * math.pi / 180 - lon1 * math.pi / 180
-    a = math.sin(dLat/2) * math.sin(dLat/2) + math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * math.sin(dLon/2) * math.sin(dLon/2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-    d = R * c * 1000 # in meters
-
-    # Calculate heading
-    y = math.sin(dLon) * math.cos(dLon)
-    x = math.cos(lat1 * math.pi / 180) * math.sin(lat2 * math.pi / 180) - math.sin(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * math.cos(dLon)
-    bearing = -math.atan2(y,x)
-
-    return d, bearing
 
 latitude, longitude = 0, 0
 roll, pitch, yaw = 0, 0, 0
@@ -53,17 +28,16 @@ isMoving=False
 rospy.init_node('gps_waypoint_follower')
 
 sub_odom = rospy.Subscriber ('/odom', Odometry, get_rotation)
-sub_gps = rospy.Subscriber ('/navsat/fix', NavSatFix, get_gps_coordinates)
 pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
 
 rate = rospy.Rate(20)
 
 rospy.loginfo("GPS waypoint follower node has started!")
 
-cellLength=0.18 #in meters
+cellLength=0.31
 
 # Example waypoints [latitude, longitude]
-waypoints = [[0.155, 0.155+0.31]]
+waypoints = [[0.155, 0.155+cellLength]]
 
 cmd_vel = Twist()
 cmd_vel.linear.x = 0
@@ -80,25 +54,27 @@ sub_lidar = rospy.Subscriber('/scan', LaserScan, get_lidar_data)
 
 
 
-maze=np.zeros((17,17))
-#print(maze)
-#cellTypes
-#    0= none    1 =|     2= ‾  3=  |
-#    4= _       5 =|‾    6=| | 7=|_  
-#    8= ‾|       9= ‾_   10= _| 11=|‾| 
-#    12=|‾_       13=|_|   14=‾_| 15=|_‾|
-#
-#    01010
-#    1A0B1
-#    01010
-#    1C1D1
-#    01010 
+#maze=np.zeros((17,17))
+
+maze = [[]]
+for i in range(0,17):
+    maze.append([])
+
+for i in range(0,17):
+    for j in range(0,17):
+        maze[i].append([' '])
+
+for i in range(0,17):
+    for j in range(0,17):
+        maze[i][j]=0
+
+
 def check_walls(yaw_in):
     global backWall, rightWall, frontWall, leftWall 
-    backWall = 1 if ranges[1] < 0.3 else 2
-    rightWall = 1 if ranges[2] < 0.3 else 2
-    frontWall = 1 if ranges[3] < 0.3 else 2
-    leftWall = 1 if ranges[0] < 0.3 else 2
+    backWall = 'x' if ranges[1] < 0.3 else 2
+    rightWall = 'x' if ranges[2] < 0.3 else 2
+    frontWall = 'x' if ranges[3] < 0.3 else 2
+    leftWall = 'x' if ranges[0] < 0.3 else 2
     print(yaw_in)
     if yaw_in < 0.1 and yaw_in > -0.1:
         # print("egyenesen")
@@ -241,5 +217,19 @@ while not rospy.is_shutdown():
     
     else:
         rate.sleep()
+
+f = open("temp.txt", "w")
+f.close()
+
+f = open("temp.txt", "a")
+
+for i in range(0, len(maze)):
+    for j in range(0, len(maze[0])):
+        f.write(str(maze[i][j]))
+        f.write(",")
+    if i!=len(maze)-1:
+        f.write("\n")
+
+f.close()
     
  
