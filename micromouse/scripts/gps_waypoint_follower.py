@@ -52,7 +52,7 @@ def get_lidar_data(msg):
 sub_lidar = rospy.Subscriber('/scan', LaserScan, get_lidar_data)
 
 maze = [[]]
-for i in range(0,17):
+for i in range(0,16):
     maze.append([])
 
 for i in range(0,17):
@@ -228,6 +228,20 @@ while not rospy.is_shutdown():
         rospy.loginfo("Last target waypoint reached!")
         print(maze)
         waypointIndex -= 1
+
+        f = open("map.txt", "w")
+        f.close()
+
+        f = open("map.txt", "a")
+
+        for i in range(0, len(maze)):
+            for j in range(0, len(maze[0])):
+                f.write(str(maze[i][j]))
+                f.write(",")
+            if i!=len(maze)-1:
+                f.write("\n")
+
+        f.close()
     
     else:
         rate.sleep()
