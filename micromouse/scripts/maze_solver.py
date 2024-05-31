@@ -76,13 +76,16 @@ for i in range(0, len(matrix)):
 for i in range(0,len(matrix)):
     print(matrix[i])
 
-
 #waypointok kiszámolása
 
 maze = matrix
 
-start = [1,1]
-goal = [15,15]
+for i in range(0, len(maze)):
+    for j in range(0, len(maze[0])):
+        if maze[i][j]=='s':
+            start = [i,j]
+        elif maze[i][j]=='g':
+            goal = [i,j]
 
 position = start
 
@@ -195,5 +198,8 @@ while not rospy.is_shutdown():
             print(len(waypoints))
             bearing=math.atan2((positionX-waypoints[waypointIndex][0]), (-positionY+waypoints[waypointIndex][1]))
     pub.publish(cmd_vel)
+
+    if waypointIndex==len(waypoints-1):
+        break
 
     rate.sleep()
