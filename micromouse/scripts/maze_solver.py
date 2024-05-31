@@ -199,7 +199,7 @@ while not rospy.is_shutdown():
             bearing=math.atan2((positionX-waypoints[waypointIndex][0]), (-positionY+waypoints[waypointIndex][1]))
     pub.publish(cmd_vel)
 
-    if waypointIndex==len(waypoints-1):
+    if waypointIndex==len(waypoints)-1:
         break
 
     rate.sleep()
