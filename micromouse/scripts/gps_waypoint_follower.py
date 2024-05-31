@@ -123,15 +123,18 @@ while not rospy.is_shutdown():
     # print("-----------")
     print(waypoints[len(waypoints)-1])
     # print("#####################")
-    # print(yaw)
+    print("Yaw: %.3f" %yaw)
     # print(check_walls(yaw))
     # Heading error, threshold is 0.1 rad
-    print(headingError)
-    print(bearing)
+    # print(headingError)
+    print("Bearing: %.3f" %bearing)
     if abs(headingError) > 0.01:
         # Only rotate in place if there is any heading error
         cmd_vel.linear.x = 0
         isRotating=True
+        if headingError > 0.1+math.pi/2 and headingError < 0.3+math.pi/2:
+            bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
+
         if headingError >0.1:
             cmd_vel.angular.z = -0.2
         elif headingError < -0.1:   
@@ -145,7 +148,7 @@ while not rospy.is_shutdown():
         cmd_vel.angular.z = 0
         isRotating=False
         # Distance error, threshold is 0.2m
-        if abs(distanceY)+abs(distanceX) < 0.15 and abs(distanceY)+abs(distanceX)>0.14:
+        if abs(distanceY)+abs(distanceX) < 0.25 and abs(distanceY)+abs(distanceX)>0.23:
             bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
 
         if abs(distanceY)+abs(distanceX) > 0.02 :
@@ -159,15 +162,15 @@ while not rospy.is_shutdown():
             isRotating=False
 
             rospy.loginfo("Target waypoint reached!")
-            print(waypoints[len(waypoints)-1][0], waypoints[len(waypoints)-1][1])
-            #bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
-            print(bearing)
-            print(yaw)
-            print(isRotating)
-            print(isMoving) 
+            # print(waypoints[len(waypoints)-1][0], waypoints[len(waypoints)-1][1])
+            # #bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
+            # print(bearing)
+            # print(yaw)
+            # print(isRotating)
+            # print(isMoving) 
             waypointIndex += 1
-            print(waypointIndex)
-            print(len(waypoints))
+            # print(waypointIndex)
+            # print(len(waypoints))
     pub.publish(cmd_vel)
 
     if waypointIndex == len(waypoints) and not(isRotating)and not(isMoving): #error: nincs mindig meghívva a valamiért
@@ -184,7 +187,6 @@ while not rospy.is_shutdown():
         elif yaw < -1.3708 and yaw >-1.7708:
             mazeIndexY-=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
-        print(check_walls(0))
         if check_walls(0)[3]==2:   #ha robot saját koord rendszere szerint a bal oldalán nincs fal akkor:
             print("balra fog menni")
             if yaw < 0.2 and yaw > -0.2:
@@ -203,11 +205,11 @@ while not rospy.is_shutdown():
             if yaw < 0.2 and yaw > -0.2:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+cellLength])
             elif yaw > 1.3708 and yaw < 1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0]+cellLength,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]])
             elif yaw < -2.9415 or yaw > 2.9415:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-cellLength])
             elif yaw < -1.3708 and yaw >-1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]])
+                waypoints.append([waypoints[waypointIndex-1][0]+cellLength,waypoints[waypointIndex-1][1]])
             
         elif check_walls(0)[1]==2: #ha robot saját koord rendszere szerint a jobb oldalán nincs fal akkor:
             print("jobbra fog menni")
@@ -219,10 +221,22 @@ while not rospy.is_shutdown():
                 waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]])
             elif yaw < -1.3708 and yaw >-1.7708:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-cellLength])
-       
+
+        elif check_walls(0)[0]==2: #ha robot saját koord rendszere szerint mögötte oldalán nincs fal akkor:
+            print("megfordul")
+            if yaw < 0.2 and yaw > -0.2:
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-cellLength])
+            elif yaw > 1.3708 and yaw < 1.7708:
+                waypoints.append([waypoints[waypointIndex-1][0]+cellLength,waypoints[waypointIndex-1][1]])
+            elif yaw < -2.9415 or yaw > 2.9415:
+                waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+cellLength])
+            elif yaw < -1.3708 and yaw >-1.7708:
+                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]-cellLength])
+
         bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
 
         rospy.loginfo("Last target waypoint reached!")
+        print(maze)
         waypointIndex -= 1
     
     else:
