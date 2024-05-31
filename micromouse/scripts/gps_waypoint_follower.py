@@ -76,16 +76,16 @@ def check_walls(yaw_in):
     frontWall = 'x' if ranges[3] < 0.3 else 2
     leftWall = 'x' if ranges[0] < 0.3 else 2
     print(yaw_in)
-    if yaw_in < 0.1 and yaw_in > -0.1:
+    if yaw_in < 0.2 and yaw_in > -0.2:
         # print("egyenesen")
         return [backWall, rightWall, frontWall, leftWall]
-    elif yaw_in > 1.4708 and yaw_in < 1.6708:
+    elif yaw_in > 1.3708 and yaw_in < 1.7708:
         # print("bal")
         return [rightWall, frontWall, leftWall, backWall]
-    elif yaw_in > 3.0415 or yaw_in < -3.0415:
+    elif yaw_in > 2.9415 or yaw_in < -2.9415:
         # print("hátra")
         return [frontWall, leftWall, backWall, rightWall]
-    elif yaw_in < -1.4708 and yaw_in > -1.6708:
+    elif yaw_in < -1.3708 and yaw_in > -1.7708:
         # print("jobb")
         return [leftWall, backWall, rightWall, frontWall]
     
@@ -127,13 +127,14 @@ while not rospy.is_shutdown():
     # print(check_walls(yaw))
     # Heading error, threshold is 0.1 rad
     print(headingError)
+    print(bearing)
     if abs(headingError) > 0.01:
         # Only rotate in place if there is any heading error
         cmd_vel.linear.x = 0
         isRotating=True
         if headingError >0.1:
             cmd_vel.angular.z = -0.2
-        elif headingError < -0.1:
+        elif headingError < -0.1:   
             cmd_vel.angular.z = 0.2
         elif headingError> 0:
             cmd_vel.angular.z=-0.05
@@ -153,61 +154,70 @@ while not rospy.is_shutdown():
         else:
             cmd_vel.linear.x = 0
             isMoving=False
+
+            cmd_vel.angular.z = 0
+            isRotating=False
+
             rospy.loginfo("Target waypoint reached!")
             print(waypoints[len(waypoints)-1][0], waypoints[len(waypoints)-1][1])
-            bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
-            print(bearing) 
+            #bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
+            print(bearing)
+            print(yaw)
+            print(isRotating)
+            print(isMoving) 
             waypointIndex += 1
+            print(waypointIndex)
+            print(len(waypoints))
     pub.publish(cmd_vel)
 
-    if waypointIndex == len(waypoints) and not(isRotating)and not(isMoving):
+    if waypointIndex == len(waypoints) and not(isRotating)and not(isMoving): #error: nincs mindig meghívva a valamiért
         
-        if yaw < 0.1 and yaw > -0.1:
+        if yaw < 0.2 and yaw > -0.2:
             mazeIndexX+=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
-        elif yaw > 1.4708 and yaw < 1.6708:
+        elif yaw > 1.3708 and yaw < 1.7708:
             mazeIndexY+=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
-        elif yaw < -3.0415 or yaw > 3.0415:
+        elif yaw < -2.9415 or yaw > 2.9415:
             mazeIndexX-=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
-        elif yaw < -1.4708 and yaw >-1.6708:
+        elif yaw < -1.3708 and yaw >-1.7708:
             mazeIndexY-=2
             maze=maze_fill(mazeIndexX, mazeIndexY, maze, yaw)
         print(check_walls(0))
         if check_walls(0)[3]==2:   #ha robot saját koord rendszere szerint a bal oldalán nincs fal akkor:
             print("balra fog menni")
-            if yaw < 0.1 and yaw > -0.1:
+            if yaw < 0.2 and yaw > -0.2:
                 
                 waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
-            elif yaw > 1.4708 and yaw < 1.6708:
+            elif yaw > 1.3708 and yaw < 1.7708:
                
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
-            elif yaw < -3.0415 or yaw > 3.0415:
+            elif yaw < -2.9415 or yaw > 2.9415:
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
-            elif yaw < -1.4708 and yaw >-1.6708:
+            elif yaw < -1.3708 and yaw >-1.7708:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
             
         elif check_walls(0)[2]==2: #ha robot saját koord rendszere szerint előtte nincs fal akkor:
             print("egyenesen fog menni")
-            if yaw < 0.1 and yaw > -0.1:
+            if yaw < 0.2 and yaw > -0.2:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
-            elif yaw > 1.4708 and yaw < 1.6708:
+            elif yaw > 1.3708 and yaw < 1.7708:
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
-            elif yaw < -3.0415 or yaw > 3.0415:
+            elif yaw < -2.9415 or yaw > 2.9415:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
-            elif yaw < -1.4708 and yaw >-1.6708:
+            elif yaw < -1.3708 and yaw >-1.7708:
                 waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
             
         elif check_walls(0)[1]==2: #ha robot saját koord rendszere szerint a jobb oldalán nincs fal akkor:
             print("jobbra fog menni")
-            if yaw < 0.1 and yaw > -0.1:
+            if yaw < 0.2 and yaw > -0.2:
                 waypoints.append([waypoints[waypointIndex-1][0]+0.31,waypoints[waypointIndex-1][1]])
-            elif yaw > 1.4708 and yaw < 1.6708:
+            elif yaw > 1.3708 and yaw < 1.7708:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+0.31])
-            elif yaw < -3.0415 or yaw > 3.0415:
+            elif yaw < -2.9415 or yaw > 2.9415:
                 waypoints.append([waypoints[waypointIndex-1][0]-0.31,waypoints[waypointIndex-1][1]])
-            elif yaw < -1.4708 and yaw >-1.6708:
+            elif yaw < -1.3708 and yaw >-1.7708:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]-0.31])
        
         bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
