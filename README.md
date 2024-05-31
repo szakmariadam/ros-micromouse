@@ -70,3 +70,4 @@ A korábban elkészült térképmátrix segítségével számoltuk ki a leggyors
 # Eredmények
 A feladat végére elkészítettünk egy labirintust, amit egy mobilrobot fel tud fedezni majd az ebből kapott térkép alapján meg tud oldani a leggyorsabb útvonalon. A labirintus feltérképezése működne bármilyen micromouse szerű labirintussal. A megoldáshoz bármilyen kezdő- és végpontot meg lehet adni.
 ### A feladatról készült videó:
+https://youtu.be/ELCYVGkG-bI
