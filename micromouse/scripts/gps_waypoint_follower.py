@@ -221,7 +221,7 @@ while not rospy.is_shutdown():
             elif yaw < -2.9415 or yaw > 2.9415:
                 waypoints.append([waypoints[waypointIndex-1][0],waypoints[waypointIndex-1][1]+cellLength])
             elif yaw < -1.3708 and yaw >-1.7708:
-                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]-cellLength])
+                waypoints.append([waypoints[waypointIndex-1][0]-cellLength,waypoints[waypointIndex-1][1]])
 
         bearing=math.atan2((positionX-waypoints[len(waypoints)-1][0]), (-positionY+waypoints[len(waypoints)-1][1]))
 
