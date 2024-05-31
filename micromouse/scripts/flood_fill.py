@@ -9,7 +9,7 @@ def isNeighbour(maze, x, y, n):
     
 matrix = [[]]
 
-f=open("temp.txt","r")
+f=open("maze_map.txt","r")
 
 temp=f.read()
 
@@ -29,23 +29,23 @@ for i in range(0,len(temp)):
 
 for i in range(0, len(matrix)):
     for j in range(0, len(matrix[0])):
-         if matrix[i][j]!="x" and matrix[i][j]!="s" and matrix[i][j]!="g":
+         if matrix[i][j]!="x" and matrix[i][j]!="s" and matrix[i][j]!="g" and matrix[i][j]!="-":
             matrix[i][j]=int(matrix[i][j])
 
-#maze=matrix
+maze=matrix
 
 #térképezés eredménye:   
-maze = [[ 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ],
-        ['x','s','-', 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'x'],
-        [ 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'-', 0 ],
-        ['x', 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'x', 0 ,'x'],
-        [ 0 ,'-', 0 ,'x', 0 ,'x', 0 ,'-', 0 ,'-', 0 ],
-        ['x', 0 ,'x', 0 ,'-', 0 ,'x', 0 ,'x', 0 ,'x'],
-        [ 0 ,'-', 0 ,'-', 0 ,'x', 0 ,'-', 0 ,'-', 0 ],
-        ['x', 0 ,'x', 0 ,'-', 0 ,'-', 0 ,'x', 0 ,'x'],
-        [ 0 ,'-', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'-', 0 ],
-        ['x', 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'-','g','x'],
-        [ 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ]]
+# maze = [[ 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ],
+#         ['x','s','x', 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'x'],
+#         [ 0 ,'-', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'-', 0 ],
+#         ['x', 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'x', 0 ,'x'],
+#         [ 0 ,'-', 0 ,'x', 0 ,'x', 0 ,'-', 0 ,'-', 0 ],
+#         ['x', 0 ,'x', 0 ,'-', 0 ,'x', 0 ,'x', 0 ,'x'],
+#         [ 0 ,'-', 0 ,'-', 0 ,'x', 0 ,'-', 0 ,'-', 0 ],
+#         ['x', 0 ,'x', 0 ,'-', 0 ,'-', 0 ,'x', 0 ,'x'],
+#         [ 0 ,'-', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'-', 0 ],
+#         ['x', 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'-','g','x'],
+#         [ 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ,'x', 0 ]]
 
 # páratlan index 0: sarokú
 # '-' helyett is 0
@@ -58,7 +58,7 @@ for i in range(0, len(maze)):
             maze[i][j]=0
 
 start = [1,1]
-goal = [9,9]
+goal = [15,15]
 
 maze[start[0]][start[1]]='s'
 maze[goal[0]][goal[1]]='g'

@@ -82,7 +82,7 @@ for i in range(0,len(matrix)):
 maze = matrix
 
 start = [1,1]
-goal = [9,9]
+goal = [15,15]
 
 position = start
 
