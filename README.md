@@ -18,7 +18,7 @@ A feladat egy micromouse jellegű labirintus megoldása Ros noetic segítségév
 2. [Micromouse robot](#micromouse-robot)
 3. [Labirintus feltérképezése](#labirintus-feltérképezése)
 4. [Labirintus megoldása](#labirintus-megoldása)
-5. [Összefoglalás](#összefoglalás)
+5. [Eredmények](#eredmények)
 
 # Labirintus
 ## Felépítés
